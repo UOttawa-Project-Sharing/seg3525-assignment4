@@ -5,6 +5,8 @@ import products from '../Data/products';
 import { addToCart } from '../Data/cartSlice';
 import ProductCard from '../components/ProductCard';
 import { Link } from 'react-router';
+import SurveyPopup from '../components/SurveyPopup';
+import React from 'react';
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -18,8 +20,18 @@ export default function Home() {
     .sort((a, b) => b.discount - a.discount)
     .slice(0, 3);
 
+  const [showSurvey, setShowSurvey] = React.useState(false);
+  const [survey, setSurvey] = React.useState({ rating: '', comment: '' });
+
   return (
     <Container className="py-5">
+      <SurveyPopup
+        show={showSurvey}
+        survey={survey}
+        setSurvey={setSurvey}
+        onClose={() => setShowSurvey(false)}
+        onSubmit={() => { setShowSurvey(false); setSurvey({ rating: '', comment: '' }); }}
+      />
       <Row className="mb-4 align-items-center">
         <Col md={8}>
           <h1 className="display-4 fw-bold mb-3">Welcome to StyleNest!</h1>
@@ -27,12 +39,12 @@ export default function Home() {
           <Button variant="primary" size="lg" className="me-2" as={Link} to="/products">
             <BagFill className="me-2" /> Start Shopping
           </Button>
-          <Button variant="outline-secondary" size="lg" href="#survey">
+          <Button variant="outline-secondary" size="lg" onClick={() => setShowSurvey(true)}>
             <StarFill className="me-2" /> Give Feedback
           </Button>
         </Col>
         <Col md={4} className="text-center">
-          <img src="/vite.svg" alt="StyleNest Logo" style={{ maxWidth: '180px' }} />
+          <img src="./logo.png" alt="StyleNest Logo" style={{ maxWidth: '180px' }} />
         </Col>
       </Row>
       <Row className="mb-5">

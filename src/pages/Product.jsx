@@ -15,6 +15,11 @@ export default function ProductDetails() {
     const [showToast, setShowToast] = useState(false);
     const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || '');
     const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || '');
+    const [showReviewForm, setShowReviewForm] = useState(false);
+    const [reviewTitle, setReviewTitle] = useState('');
+    const [reviewBody, setReviewBody] = useState('');
+    const [reviewRating, setReviewRating] = useState(5);
+    const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
     if (!product) {
         return (
@@ -36,6 +41,29 @@ export default function ProductDetails() {
     const handleAddToCart = () => {
         dispatch(addToCart({ productId: product.id, quantity, size: selectedSize, color: selectedColor }));
         setShowToast(true);
+    };
+
+    const handleReviewSubmit = (e) => {
+        e.preventDefault();
+        // Add the review to the product's reviews array in the products DB
+        const newReview = {
+            reviewer: 'Anonymous', // You can replace with user info if available
+            avatar: 'https://randomuser.me/api/portraits/lego/1.jpg', // Placeholder avatar
+            rating: reviewRating,
+            title: reviewTitle,
+            body: reviewBody,
+            date: new Date().toLocaleDateString()
+        };
+        const prod = products.find(p => String(p.id) === String(id));
+        if (prod) {
+            prod.reviews = [newReview, ...(prod.reviews || [])];
+        }
+        setReviewSubmitted(true);
+        setShowReviewForm(false);
+        setReviewTitle('');
+        setReviewBody('');
+        setReviewRating(5);
+        setTimeout(() => setReviewSubmitted(false), 2000);
     };
 
     // Calculate average rating for stars display
@@ -258,6 +286,59 @@ export default function ProductDetails() {
                         </div>
                     )}
                 </div>
+                <div className="mt-4 text-center">
+                    <Button variant="primary" onClick={() => setShowReviewForm(true)}>Review this item</Button>
+                </div>
+                {showReviewForm && (
+                    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.4)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div className="d-flex justify-content-center align-items-center w-100 h-100">
+                            <Card style={{ maxWidth: 500, width: '100%', boxShadow: '0 2px 16px #0002', borderRadius: 16 }}>
+                                <Card.Body>
+                                    <Card.Title className="mb-3 text-center" style={{ fontWeight: 600, fontSize: '1.4rem' }}>Write a Review</Card.Title>
+                                    <Form onSubmit={handleReviewSubmit}>
+                                        <Form.Group className="mb-3" controlId="reviewTitle">
+                                            <Form.Label>Title</Form.Label>
+                                            <Form.Control type="text" value={reviewTitle} onChange={e => setReviewTitle(e.target.value)} required placeholder="Give your review a title..." style={{ borderRadius: 8 }} />
+                                        </Form.Group>
+                                        <Form.Group className="mb-3" controlId="reviewBody">
+                                            <Form.Label>Review</Form.Label>
+                                            <Form.Control as="textarea" rows={3} value={reviewBody} onChange={e => setReviewBody(e.target.value)} required placeholder="Share your experience..." style={{ borderRadius: 8 }} />
+                                        </Form.Group>
+                                        <Form.Group className="mb-4" controlId="reviewRating">
+                                            <Form.Label>Rating</Form.Label>
+                                            <div>
+                                                {[1,2,3,4,5].map(n => (
+                                                    <Button
+                                                        key={n}
+                                                        variant={reviewRating >= n ? 'warning' : 'outline-secondary'}
+                                                        size="sm"
+                                                        className="me-1 px-2"
+                                                        style={{ fontSize: 22, borderRadius: 6, transition: 'all 0.15s' }}
+                                                        onClick={e => { e.preventDefault(); setReviewRating(n); }}
+                                                        aria-label={`Rate ${n} star${n > 1 ? 's' : ''}`}
+                                                    >
+                                                        ★
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        </Form.Group>
+                                        <div className="d-flex justify-content-end gap-2">
+                                            <Button variant="secondary" onClick={() => setShowReviewForm(false)} type="button">Cancel</Button>
+                                            <Button variant="success" type="submit">Submit Review</Button>
+                                        </div>
+                                    </Form>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                    </div>
+                )}
+                {reviewSubmitted && (
+                    <ToastContainer position="bottom-end" className="p-3">
+                        <Toast show={reviewSubmitted} onClose={() => setReviewSubmitted(false)} delay={2000} autohide bg="success">
+                            <Toast.Body className="text-white">Thank you for your review!</Toast.Body>
+                        </Toast>
+                    </ToastContainer>
+                )}
             </div>
         </div>
     );
