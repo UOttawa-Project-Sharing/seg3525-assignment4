@@ -31,7 +31,7 @@ function ProductCard({ product, filterState }) {
     >
       <Card.Img
         variant="top"
-        src={product.image}
+        src={product.images ? product.images[0] : product.image}
         alt={product.name}
         style={{ objectFit: 'cover', width: '100%', height: '220px' }}
       />

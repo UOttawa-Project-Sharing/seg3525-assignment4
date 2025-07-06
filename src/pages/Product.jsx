@@ -3,7 +3,7 @@ import products from '../Data/products';
 import { useDispatch } from 'react-redux';
 import { addToCart } from '../Data/cartSlice';
 import { BagFill, Star, StarFill } from 'react-bootstrap-icons';
-import { Card, Button, Badge, Accordion, Form, Toast, ToastContainer, OverlayTrigger, Tooltip, Breadcrumb } from 'react-bootstrap';
+import { Card, Button, Badge, Accordion, Form, Toast, ToastContainer, OverlayTrigger, Tooltip, Breadcrumb, Carousel } from 'react-bootstrap';
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 
@@ -98,12 +98,27 @@ export default function ProductDetails() {
             <div className="row g-5">
                 <div className="col-md-6">
                     <div className="position-relative border rounded overflow-hidden shadow">
-                        <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-100"
-                            style={{ objectFit: 'cover', height: '420px', borderRadius: '12px', background: '#f6f7f9' }}
-                        />
+                        {product.images && product.images.length > 1 ? (
+                            <Carousel interval={null} indicators={product.images.length > 1}>
+                                {product.images.map((img, idx) => (
+                                    <Carousel.Item key={idx}>
+                                        <img
+                                            src={img}
+                                            alt={`${product.name} ${idx + 1}`}
+                                            className="w-100"
+                                            style={{ objectFit: 'cover', height: '420px', borderRadius: '12px', background: '#f6f7f9' }}
+                                        />
+                                    </Carousel.Item>
+                                ))}
+                            </Carousel>
+                        ) : (
+                            <img
+                                src={product.images ? product.images[0] : product.image}
+                                alt={product.name}
+                                className="w-100"
+                                style={{ objectFit: 'cover', height: '420px', borderRadius: '12px', background: '#f6f7f9' }}
+                            />
+                        )}
                         {discounted && (
                             <Badge
                                 bg="danger"
