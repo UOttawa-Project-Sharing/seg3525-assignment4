@@ -12,13 +12,11 @@ const cardHoverStyle = {
   zIndex: 2
 };
 
-function ProductCard({ product }) {
+function ProductCard({ product, filterState }) {
   const [hover, setHover] = React.useState(false);
   const navigate = useNavigate();
   const handleCardClick = () => {
-    // Prevent navigation if clicking the Add to Cart button
-    // if (e.target.closest('button')) return;
-    navigate(`/product/${product.id}`);
+    navigate(`/product/${product.id}`, { state: filterState });
   };
   return (
     <Card

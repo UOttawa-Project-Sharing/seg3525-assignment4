@@ -28,13 +28,40 @@ export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
 
+  // Helper to check stock for selected size/color
+  function hasStock(p) {
+    if (!p.stock || typeof p.stock !== "object") return !!p.stock;
+    // If both size and color are selected, check those combos
+    if (selectedSizes.length && selectedColors.length) {
+      return selectedSizes.some(size =>
+        p.stock[size] && selectedColors.some(color => p.stock[size][color] > 0)
+      );
+    }
+    // If only size is selected
+    if (selectedSizes.length) {
+      return selectedSizes.some(size =>
+        p.stock[size] && Object.values(p.stock[size]).some(qty => qty > 0)
+      );
+    }
+    // If only color is selected
+    if (selectedColors.length) {
+      return Object.keys(p.stock).some(size =>
+        selectedColors.some(color => p.stock[size][color] > 0)
+      );
+    }
+    // No size/color selected: check any stock
+    return Object.values(p.stock).some(sizeObj =>
+      Object.values(sizeObj).some(qty => qty > 0)
+    );
+  }
+
   // Filter products by price, size, color, stock, discount, and search query
   const filteredProducts = productsData.filter((p) =>
       p.price >= priceRange[0] &&
       p.price <= priceRange[1] &&
       (selectedSizes.length === 0 || p.sizes.some((size) => selectedSizes.includes(size))) &&
       (selectedColors.length === 0 || p.colors.some((color) => selectedColors.includes(color))) &&
-      (!inStockOnly || (typeof p.stock === "number" ? p.stock > 0 : !!p.stock)) &&
+      (!inStockOnly || hasStock(p)) &&
       (!discountedOnly || p.discount > 0) &&
       (selectedCategory === "" || p.category === selectedCategory) &&
       (
@@ -212,7 +239,10 @@ export default function Search() {
                   <div className="row g-4">
                     {sortedProducts.map((product) => (
                         <div className="col-12 col-sm-6 col-md-4 col-lg-3" key={product.id}>
-                          <ProductCard product={product} />
+                          <ProductCard product={product} filterState={{
+                            selectedSizes,
+                            selectedColors
+                          }} />
                         </div>
                     ))}
                   </div>

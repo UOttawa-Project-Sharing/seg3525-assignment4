@@ -5,16 +5,26 @@ import { addToCart } from '../Data/cartSlice';
 import { BagFill, Star, StarFill } from 'react-bootstrap-icons';
 import { Card, Button, Badge, Accordion, Form, Toast, ToastContainer, OverlayTrigger, Tooltip, Breadcrumb } from 'react-bootstrap';
 import React, { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
 export default function ProductDetails() {
     const { id } = useParams();
+    const location = useLocation();
+    const filterState = location.state || {};
     const product = products.find(p => String(p.id) === String(id));
     const dispatch = useDispatch();
     const [quantity, setQuantity] = useState(1);
     const [showToast, setShowToast] = useState(false);
-    const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || '');
-    const [selectedColor, setSelectedColor] = useState(product?.colors?.[0] || '');
+    const [selectedSize, setSelectedSize] = useState(
+        filterState.selectedSizes && filterState.selectedSizes.length > 0 && product?.sizes?.includes(filterState.selectedSizes[0])
+            ? filterState.selectedSizes[0]
+            : product?.sizes?.[0] || ''
+    );
+    const [selectedColor, setSelectedColor] = useState(
+        filterState.selectedColors && filterState.selectedColors.length > 0 && product?.colors?.includes(filterState.selectedColors[0])
+            ? filterState.selectedColors[0]
+            : product?.colors?.[0] || ''
+    );
     const [showReviewForm, setShowReviewForm] = useState(false);
     const [reviewTitle, setReviewTitle] = useState('');
     const [reviewBody, setReviewBody] = useState('');
