@@ -57,7 +57,7 @@ export default function NavBar() {
             </Container>
             <div className="d-lg-none">
                 <Navbar.Collapse id="main-navbar-nav" className="w-100 mt-2 vw-100">
-                    <Nav className="flex-column align-items-end">
+                    <Nav className="flex-column align-items-end ms-5">
                         <Nav.Link as={Link} to="/" className="py-2 text-dark fw-semibold w-100">Home</Nav.Link>
                         <Nav.Link as={Link} to="/about" className="py-2 text-dark fw-semibold w-100">About</Nav.Link>
                         <NavDropdown title="Products" id="mobile-products-dropdown" className="w-100">
