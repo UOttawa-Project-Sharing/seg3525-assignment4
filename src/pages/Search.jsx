@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useSearchParams } from "react-router";
 import productsData from "../Data/products";
 import ProductCard from "../components/ProductCard";
 import Slider from "rc-slider";
@@ -30,6 +31,45 @@ export default function Search() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const inputRef = useRef(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Helper to parse array params from query string
+  const parseArrayParam = (param) => {
+    const val = searchParams.get(param);
+    return val ? val.split(",") : [];
+  };
+
+  // Initialize state from URL params
+  useEffect(() => {
+    setPriceRange([
+      Number(searchParams.get("minPrice")) || minPrice,
+      Number(searchParams.get("maxPrice")) || maxPrice,
+    ]);
+    setSelectedSizes(parseArrayParam("sizes"));
+    setSelectedColors(parseArrayParam("colors"));
+    setInStockOnly(searchParams.get("inStock") === "1");
+    setDiscountedOnly(searchParams.get("discounted") === "1");
+    setSortOption(searchParams.get("sort") || "featured");
+    setSearchQuery(searchParams.get("query") || "");
+    setSelectedCategory(searchParams.get("category") || "");
+    // eslint-disable-next-line
+  }, []);
+
+  // Update URL when filters/search change
+  useEffect(() => {
+    const params = {};
+    if (priceRange[0] !== minPrice) params.minPrice = priceRange[0];
+    if (priceRange[1] !== maxPrice) params.maxPrice = priceRange[1];
+    if (selectedSizes.length) params.sizes = selectedSizes.join(",");
+    if (selectedColors.length) params.colors = selectedColors.join(",");
+    if (inStockOnly) params.inStock = "1";
+    if (discountedOnly) params.discounted = "1";
+    if (sortOption !== "featured") params.sort = sortOption;
+    if (searchQuery) params.query = searchQuery;
+    if (selectedCategory) params.category = selectedCategory;
+    setSearchParams(params, { replace: true });
+    // eslint-disable-next-line
+  }, [priceRange, selectedSizes, selectedColors, inStockOnly, discountedOnly, sortOption, searchQuery, selectedCategory]);
 
   // Fuzzy search setup
   const fuse = new Fuse(productsData, {
@@ -180,6 +220,29 @@ export default function Search() {
     );
   }
 
+  // Helper to determine if any filter is active (excluding searchQuery)
+  const isFilterActive = () => {
+    return (
+      priceRange[0] !== minPrice ||
+      priceRange[1] !== maxPrice ||
+      selectedSizes.length > 0 ||
+      selectedColors.length > 0 ||
+      inStockOnly ||
+      discountedOnly ||
+      selectedCategory !== ""
+    );
+  };
+
+  // Clear all filters (but not searchQuery)
+  const clearFilters = () => {
+    setPriceRange([minPrice, maxPrice]);
+    setSelectedSizes([]);
+    setSelectedColors([]);
+    setInStockOnly(false);
+    setDiscountedOnly(false);
+    setSelectedCategory("");
+  };
+
   return (
     <div className="bg-light" style={{ minHeight: "100vh" }}>
       <div className="container-fluid py-4">
@@ -289,6 +352,17 @@ export default function Search() {
                 <label className="form-check-label" htmlFor="discountedOnly">
                   Discounted Only
                 </label>
+              </div>
+
+              {/* Clear Filters Button */}
+              <div className="mt-4">
+                <button
+                  className="btn btn-outline-danger w-100"
+                  onClick={clearFilters}
+                  disabled={!isFilterActive()}
+                >
+                  Clear Filters
+                </button>
               </div>
             </div>
           </aside>
