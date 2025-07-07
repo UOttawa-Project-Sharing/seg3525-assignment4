@@ -4,9 +4,12 @@ import ProductCard from "../components/ProductCard";
 import categories from "../Data/categories";
 import { Breadcrumb } from 'react-bootstrap';
 import { Link as RouterLink } from 'react-router';
+import { useNavigate } from "react-router";
+import { ArrowLeft } from 'react-bootstrap-icons';
 
 export default function ProductsByCategory() {
     const { category } = useParams();
+    const navigate = useNavigate();
 
     // Normalize category for comparison (case-insensitive)
     const normalizedCategory = category?.toLowerCase();
@@ -29,6 +32,9 @@ export default function ProductsByCategory() {
 
     return (
         <div className="container py-5">
+            <button className="btn btn-outline-secondary mb-3" onClick={() => navigate(-1)}>
+                <ArrowLeft className="me-2" /> Previous page
+            </button>
             <Breadcrumb className="mb-4">
                 <Breadcrumb.Item linkAs={RouterLink} linkProps={{ to: '/' }}>Home</Breadcrumb.Item>
                 <Breadcrumb.Item linkAs={RouterLink} linkProps={{ to: '/products' }} active={!categoryInfo}>

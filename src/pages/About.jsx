@@ -1,9 +1,14 @@
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import { BagFill, TagFill, StarFill, PeopleFill, EnvelopeFill } from 'react-bootstrap-icons';
+import { BagFill, TagFill, StarFill, PeopleFill, EnvelopeFill, ArrowLeft } from 'react-bootstrap-icons';
+import { useNavigate } from 'react-router';
 
 export default function About() {
+  const navigate = useNavigate();
   return (
     <Container className="py-5">
+      <button className="btn btn-outline-secondary mb-3" onClick={() => navigate(-1)}>
+        <ArrowLeft className="me-2" /> Previous page
+      </button>
       <Row className="mb-4 align-items-center justify-content-center">
         <Col md={8} className="text-center mx-auto">
           <img src="logo.png" alt="Store Logo" style={{ maxWidth: '180px' }} className="mb-3" />

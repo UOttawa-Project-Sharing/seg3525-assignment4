@@ -5,11 +5,12 @@ import { addToCart } from '../Data/cartSlice';
 import { BagFill, Star, StarFill } from 'react-bootstrap-icons';
 import { Card, Button, Badge, Accordion, Form, Toast, ToastContainer, OverlayTrigger, Tooltip, Breadcrumb, Carousel } from 'react-bootstrap';
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 
 export default function ProductDetails() {
     const { id } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
     const filterState = location.state || {};
     const product = products.find(p => String(p.id) === String(id));
     const dispatch = useDispatch();
@@ -84,6 +85,9 @@ export default function ProductDetails() {
 
     return (
         <div className="container py-5">
+            <Button variant="outline-secondary" className="mb-3" onClick={() => navigate(-1)}>
+                &larr; Previous Page
+            </Button>
             <Breadcrumb className="mb-4">
                 <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/' }}>Home</Breadcrumb.Item>
                 <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/products' }}>Products</Breadcrumb.Item>
