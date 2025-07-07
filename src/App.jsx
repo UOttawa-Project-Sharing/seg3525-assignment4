@@ -1,4 +1,4 @@
-import { Routes, Route, Link } from 'react-router'
+import { Routes, Route } from 'react-router'
 import './styles/App.css'
 import { Provider } from 'react-redux';
 
@@ -13,6 +13,8 @@ import ProductDetails from "./pages/Product.jsx";
 import Products from "./pages/Products.jsx";
 import Search from "./pages/Search.jsx";
 import AllCategories from "./pages/AllProducts.jsx";
+import NotImplemented from "./pages/NotImplemented.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 function App() {
   return (
@@ -31,7 +33,8 @@ function App() {
           <Route path="/products/:category" element={<Products/>} />
           <Route path="/search/:value" element={<Search />} />
           <Route path="/search" element={<Search />} />
-        <Route path="*" element={<h2>Page Not Found</h2>} />
+          <Route path="/user" element={<NotImplemented />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer/>
     </Provider>
