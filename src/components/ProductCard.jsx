@@ -20,7 +20,7 @@ function ProductCard({ product, filterState }) {
   };
   return (
     <Card
-      className="h-100 border-0 shadow-sm"
+      className="h-100 d-flex flex-column position-relative"
       style={hover ? { ...cardStyle, ...cardHoverStyle } : cardStyle}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -35,7 +35,7 @@ function ProductCard({ product, filterState }) {
         alt={product.name}
         style={{ objectFit: 'cover', width: '100%', height: '220px' }}
       />
-      <Card.Body>
+      <Card.Body className="d-flex flex-column flex-grow-1">
         {product.discount > 0 && (
           <div className="badge bg-danger position-absolute" style={{ top: 10, right: 10, zIndex: 1 }}>
             -{product.discount}%
@@ -43,6 +43,7 @@ function ProductCard({ product, filterState }) {
         )}
         <Card.Title>{product.name}</Card.Title>
         <Card.Text>{product.description}</Card.Text>
+        <div className="mt-auto">
         <div className="mb-2 fw-bold">
           {product.discount > 0 ? (
             <>
@@ -53,9 +54,10 @@ function ProductCard({ product, filterState }) {
             <>${product.price.toFixed(2)}</>
           )}
         </div>
-        <Button variant="primary" size="sm" /*onClick={() => handleCardClick()}*/>
-          <BagFill className="me-1" /> More Info
-        </Button>
+          <Button variant="primary" size="sm">
+            <BagFill className="me-1" /> More Info
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );
