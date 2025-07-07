@@ -10,10 +10,12 @@ import Fuse from "fuse.js";
 const sortedUnique = (arr) => Array.from(new Set(arr)).sort();
 
 export default function Search() {
-  // Find min and max price from products
-  const prices = productsData.map((p) => p.price);
-  const minPrice = Math.floor(Math.min(...prices));
-  const maxPrice = Math.ceil(Math.max(...prices));
+  // Find min and max discounted price from products
+  const discountedPrices = productsData.map((p) =>
+    p.discount ? p.price * (1 - p.discount / 100) : p.price
+  );
+  const minPrice = Math.floor(Math.min(...discountedPrices));
+  const maxPrice = Math.ceil(Math.max(...discountedPrices));
 
   const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
 
@@ -171,14 +173,18 @@ export default function Search() {
   const filteredProducts = fuzzyResults
     .map((r) => r.item)
     .filter(
-      (p) =>
-        p.price >= priceRange[0] &&
-        p.price <= priceRange[1] &&
-        (selectedSizes.length === 0 || p.sizes.some((size) => selectedSizes.includes(size))) &&
-        (selectedColors.length === 0 || p.colors.some((color) => selectedColors.includes(color))) &&
-        (!inStockOnly || hasStock(p)) &&
-        (!discountedOnly || p.discount > 0) &&
-        (selectedCategory === "" || p.category === selectedCategory)
+      (p) => {
+        const discounted = p.discount ? p.price * (1 - p.discount / 100) : p.price;
+        return (
+          discounted >= priceRange[0] &&
+          discounted <= priceRange[1] &&
+          (selectedSizes.length === 0 || p.sizes.some((size) => selectedSizes.includes(size))) &&
+          (selectedColors.length === 0 || p.colors.some((color) => selectedColors.includes(color))) &&
+          (!inStockOnly || hasStock(p)) &&
+          (!discountedOnly || p.discount > 0) &&
+          (selectedCategory === "" || p.category === selectedCategory)
+        );
+      }
     );
 
   // Sort filtered products
