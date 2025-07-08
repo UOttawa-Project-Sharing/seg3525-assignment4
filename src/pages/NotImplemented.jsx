@@ -4,8 +4,10 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { useNavigate } from 'react-router';
 
 function NotImplemented() {
+    const navigate = useNavigate();
   return (
     <div className="d-flex flex-column min-vh-100 bg-light">
       <Container fluid className="flex-grow-1 d-flex flex-column justify-content-center align-items-center bg-gradient p-0" style={{background: 'linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%)'}}>
@@ -16,8 +18,8 @@ function NotImplemented() {
               <span className="fw-semibold">Sorry, this feature is not available.</span><br />
               <span className="text-secondary">This website is a demonstration project and does not have a backend.</span>
             </p>
-            <Button variant="primary" size="lg" href="/" className="shadow-sm px-4 py-2">
-               Back To Home
+            <Button variant="primary" size="lg" onClick={() => navigate(-1)} className="shadow-sm px-4 py-2">
+               Back To Previous Page
             </Button>
           </Col>
         </Row>

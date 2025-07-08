@@ -1,7 +1,9 @@
 import React from "react";
 import { Container, Row, Col, Button, Card } from "react-bootstrap";
+import { useNavigate } from 'react-router';
 
 function NotFound() {
+    const navigate = useNavigate();
   return (
     <Container fluid className="d-flex align-items-center justify-content-center" style={{ minHeight: "80vh", background: "#f8f9fa" }}>
       <Row className="w-100 justify-content-center">
@@ -14,8 +16,8 @@ function NotFound() {
                 The page you are looking for does not exist.<br />
                 It might have been moved or deleted.
               </Card.Text>
-              <Button href="/" variant="primary" size="lg">
-                Go to Home
+              <Button onClick={() => navigate(-1)} variant="primary" size="lg">
+                Back To Previous Page
               </Button>
             </Card.Body>
           </Card>
